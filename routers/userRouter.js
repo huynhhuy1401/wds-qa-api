@@ -3,7 +3,7 @@ const expressAsyncHandler = require('express-async-handler')
 const bcrypt = require('bcryptjs')
 const userUtils = require('../utils/userUtils')
 const { createUser, getUser, getAllUsers, insertMany } = userUtils
-const {generateToken, isAdmin, isAuth} = require('../utils/authUtils')
+const { generateToken, isAdmin, isAuth } = require('../utils/authUtils')
 const data = require('../data')
 
 const userRouter = express.Router()
@@ -33,7 +33,6 @@ userRouter.post(
     const user = await getUser({
       username: req.body.username,
     })
-    console.log(user)
     if (user) {
       if (bcrypt.compareSync(req.body.password, user.password)) {
         res.send({
