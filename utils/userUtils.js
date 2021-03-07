@@ -14,13 +14,13 @@ const getUser = async (obj) => {
   })
 }
 
-const insertMany = async users => {
-    return await User.bulkCreate(users)
+const insertMany = async (users) => {
+  return await User.bulkCreate(users)
 }
 
 module.exports = {
-    createUser,
-    getAllUsers,
-    getUser,
-    insertMany
+  createUser,
+  getAllUsers,
+  getUser,
+  insertMany,
 }
