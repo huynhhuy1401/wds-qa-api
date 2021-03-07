@@ -19,6 +19,8 @@ userRouter.get(
 
 userRouter.get(
   '/',
+  isAuth,
+  isAdmin,
   expressAsyncHandler(async (req, res) => {
     const users = await getAllUsers()
     res.send(users)
