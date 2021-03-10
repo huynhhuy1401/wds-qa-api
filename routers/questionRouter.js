@@ -79,6 +79,7 @@ questionRouter.delete(
 
 questionRouter.patch(
   '/id',
+  isAuth,
   expressAsyncHandler(async (req, res) => {
     const { id } = req.params
     const { title, description, categoryName } = req.body
