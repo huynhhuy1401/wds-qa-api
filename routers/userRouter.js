@@ -45,7 +45,7 @@ userRouter.post(
         return
       }
     }
-    res.status(401).send({ message: 'Invalid email or password' })
+    res.status(401).send({ message: 'Invalid username or password' })
   })
 )
 
@@ -57,8 +57,15 @@ userRouter.post(
       username: req.body.username,
       password: bcrypt.hashSync(req.body.password, 8),
     }
-    const user = await createUser(userInfo)
-    res.send(user)
+    const user = await getUser({
+      username: req.body.username,
+    })
+    if (user) {
+      res.status(400).send({ message: 'Username is not available' })
+      return
+    }
+    const newUser = await createUser(userInfo)
+    res.send(newUser)
   })
 )
 

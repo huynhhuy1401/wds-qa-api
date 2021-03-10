@@ -1,13 +1,16 @@
 const express = require('express')
 const db = require('./config/db')
 const userRouter = require('./routers/userRouter')
+const questionRouter = require('./routers/questionRouter')
 require('dotenv').config()
 
 // start db
 db.authenticate()
   .then((result) => {
     console.log('Connection established.')
+    return db.sync()
   })
+  .then(console.log('All tables created successfully.'))
   .catch((error) => {
     console.log('Unable to connect to db: ', error)
   })
@@ -18,6 +21,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use('/api/users', userRouter)
+app.use('/api/questions', questionRouter)
 
 app.use((err, req, res, next) => {
   res.status(500).send({ message: err.message })
