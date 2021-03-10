@@ -55,7 +55,7 @@ questionRouter.post(
     const question = await createQuestion(questionInfo)
     const resInfo = {
       ...question.dataValues,
-      categoryName: req.body.categoryName
+      categoryName: req.body.categoryName,
     }
     res.status(201).send(resInfo)
   })
@@ -73,6 +73,22 @@ questionRouter.delete(
       res.send({ message: 'Success' })
     } else {
       res.status(403).send({ message: "You can't delete this question" })
+    }
+  })
+)
+
+questionRouter.patch(
+  '/id',
+  expressAsyncHandler(async (req, res) => {
+    const { id } = req.params
+    const { title, description, categoryName } = req.body
+    const question = await Question.findByPk(id)
+    console.log(question.userId === req.user.id)
+    if (question.userId === req.user.id || req.user.isAdmin) {
+      await updateQuestion({ id, title, description, categoryName })
+      res.send({ message: 'Success' })
+    } else {
+      res.status(403).send({ message: "You can't change this question" })
     }
   })
 )

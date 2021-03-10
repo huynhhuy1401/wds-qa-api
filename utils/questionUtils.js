@@ -20,10 +20,19 @@ const createQuestion = async ({ title, description, userId, categoryName }) => {
   })
 }
 
-const updateQuestion = async ({ id, title, description }) => {
+const updateQuestion = async ({ id, title, description, categoryName }) => {
   const question = await Question.findByPk(id)
+  const [category, created] = await Category.findOrCreate({
+    where: {
+      name: categoryName,
+    },
+    defaults: {
+      name: categoryName,
+    },
+  })
   question.title = title
   question.description = description
+  question.categoryId = category.id
   await question.save()
 }
 
