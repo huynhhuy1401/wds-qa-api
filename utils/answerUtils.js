@@ -1,4 +1,3 @@
-const Category = require('../models/category')
 const Answer = require('../models/Answer')
 
 const createAnswer = async ({ answerText, questionId, userId }) => {
@@ -20,19 +19,21 @@ const updateAnswer = async ({ id, answerText }) => {
   await answer.save()
 }
 
-const getAllAnswers = async () => {
-  return await Answer.findAll()
+const getAllAnswersOfQuestion = async (questionId) => {
+  return await Answer.findAll({
+    where: {
+      questionId: questionId,
+    },
+  })
 }
 
-const getAnswer = async (obj) => {
-  return await Answer.findOne({
-    where: obj,
-  })
+const getAnswer = async (id) => {
+  return await Answer.findByPk(id)
 }
 
 module.exports = {
   getAnswer,
-  getAllAnswers,
+  getAllAnswersOfQuestion,
   deleteAnswer,
   updateAnswer,
   createAnswer,

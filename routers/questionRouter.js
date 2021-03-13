@@ -1,6 +1,7 @@
 const express = require('express')
 const expressAsyncHandler = require('express-async-handler')
 const questionUtils = require('../utils/questionUtils')
+const answerUtils = require('../utils/answerUtils')
 const {
   getQuestion,
   getAllQuestions,
@@ -9,6 +10,7 @@ const {
   createQuestion,
   getQuestionsByCategory,
 } = questionUtils
+const { getAllAnswersOfQuestion } = answerUtils
 const { isAuth } = require('../utils/authUtils')
 const Question = require('../models/question')
 
@@ -34,8 +36,13 @@ questionRouter.get(
     const { id } = req.params
 
     const question = await getQuestion(id)
+    const answers = await getAllAnswersOfQuestion(id)
+    const data = {
+      ...question.dataValues,
+      answers: answers.dataValues
+    }
     if (question) {
-      res.send(question)
+      res.send(data)
     } else {
       res.status(404).send({ message: 'Not found' })
     }
