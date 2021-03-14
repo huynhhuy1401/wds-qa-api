@@ -1,4 +1,4 @@
-const Answer = require('../models/Answer')
+const Answer = require('../models/answer')
 
 const createAnswer = async ({ answerText, questionId, userId }) => {
   return await Answer.create({
