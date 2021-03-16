@@ -10,8 +10,6 @@ const createQuestion = async ({ title, description, userId, categoryName }) => {
       name: categoryName,
     },
   })
-  console.log(category)
-  console.log(userId)
   return await Question.create({
     title,
     description,

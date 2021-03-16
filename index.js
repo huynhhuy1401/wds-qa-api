@@ -2,6 +2,9 @@ const express = require('express')
 const db = require('./config/db')
 const userRouter = require('./routers/userRouter')
 const questionRouter = require('./routers/questionRouter')
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc')
+const cors = require('cors')
 require('dotenv').config()
 
 // start db
@@ -18,6 +21,7 @@ db.authenticate()
 // start app
 const app = express()
 app.use(express.json())
+app.use(cors())
 app.use(express.urlencoded({ extended: true }))
 
 app.use('/api/users', userRouter)
@@ -28,6 +32,54 @@ app.use((err, req, res, next) => {
 })
 
 const port = process.env.PORT || 5000
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'WDS-QA API',
+      version: '1.0.0',
+    },
+    servers: [
+      {
+        url: 'http://localhost:5000/api',
+        description: 'Development server',
+      },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        }
+      },
+      schemas: {
+        Error: {
+          type: 'object',
+          properties: {
+            code: {
+              type: 'string'
+            },
+            message: {
+              type: 'string'
+            }
+          },
+          required: ['code', 'message']
+        }
+      },
+    },
+    security: [{
+      bearerAuth: []
+    }]
+  },
+
+  apis: ['./routers/userRouter.js'], // files containing annotations as above
+};
+
+const swaggerSpec = swaggerJsdoc(options);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 app.listen(port, () => {
   console.log(`Serve at http://localhost:${port}`)
 })
