@@ -16,9 +16,13 @@ answerRouter.post(
   isAuth,
   expressAsyncHandler(async (req, res) => {
     const user = req.user
-    // Lay data tu req.body
-    // Tao answer moi
-    // Gui ve thong tin cua answer vua tao res.status(201).send(...)
+    const answerInfo = {
+      answerText: req.body.answerText,
+      userId: user.id,
+      questionId: req.body.questionId,
+    }
+    const answer = await createAnswer(answerInfo)
+    res.status(201).send(answer)
   })
 )
 
@@ -28,9 +32,14 @@ answerRouter.delete(
   isAuth,
   expressAsyncHandler(async (req, res) => {
     const user = req.user
-    // Kiem tra user co phai la nguoi tao ra answer hoac admin hay ko (thong tin co trong user)
-    // Neu dung thi cho xoa deleteAnswer(...)
-    // Neu khong thi res.status(403).send({ message: "You can't delete this question" })
+    const answer = await Answer.findByPk(id)
+    console.log(answer.userId === req.user.id)
+    if (answer.userId === req.user.id || req.user.isAdmin) {
+      await deleteAnswer()
+      res.send({ message: 'Success' })
+    } else {
+      res.status(403).send({ message: "You can't delete this answer" })
+    }
   })
 )
 
@@ -40,8 +49,14 @@ answerRouter.patch(
   isAuth,
   expressAsyncHandler(async (req, res) => {
     const user = req.user
-    // Kiem tra user co phai la nguoi tao ra answer hoac admin hay ko (thong tin co trong user)
-    // Neu dung thi lay thong tin tu req.body cho sua updateAnswer(...)
-    // Neu khong thi res.status(403).send({ message: "You can't change this question" })
+    const { answerText } = req.body
+    const answer = await Answer.findByPk(id)
+    console.log(answer.userId === req.user.id)
+    if (question.userId === req.user.id || req.user.isAdmin) {
+      await updateAnswer({ id, answerText })
+      res.send({ message: 'Success' })
+    } else {
+      res.status(403).send({ message: "You can't change this answer" })
+    }
   })
 )
