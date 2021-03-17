@@ -39,7 +39,7 @@ questionRouter.get(
     const answers = await getAllAnswersOfQuestion(id)
     const data = {
       ...question.dataValues,
-      answers: answers.dataValues
+      answers: answers
     }
     if (question) {
       res.send(data)

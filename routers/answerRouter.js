@@ -60,3 +60,5 @@ answerRouter.patch(
     }
   })
 )
+
+module.exports = answerRouter

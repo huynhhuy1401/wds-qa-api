@@ -4,7 +4,8 @@ const userRouter = require('./routers/userRouter')
 const questionRouter = require('./routers/questionRouter')
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc')
-const cors = require('cors')
+const cors = require('cors');
+const answerRouter = require('./routers/answerRouter');
 require('dotenv').config()
 
 // start db
@@ -26,6 +27,7 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use('/api/users', userRouter)
 app.use('/api/questions', questionRouter)
+app.use('/api/answers', answerRouter)
 
 app.use((err, req, res, next) => {
   res.status(500).send({ message: err.message })
