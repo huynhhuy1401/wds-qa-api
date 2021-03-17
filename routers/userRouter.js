@@ -30,6 +30,12 @@ const userRouter = express.Router()
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/Error'
+ *     Forbiden:
+ *       description: Forbiden
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
  */
 
 /**
@@ -42,7 +48,7 @@ const userRouter = express.Router()
  *         id:
  *           type: integer
  *           description: The user ID.
- *           example: 0
+ *           example: 1
  *         name:
  *           type: string
  *           description: The user's name.
@@ -71,7 +77,7 @@ const userRouter = express.Router()
  *         id:
  *           type: integer
  *           description: The user ID.
- *           example: 0
+ *           example: 1
  *         name:
  *           type: string
  *           description: The user's name.

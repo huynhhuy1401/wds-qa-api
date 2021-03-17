@@ -16,6 +16,61 @@ const Question = require('../models/question')
 
 const questionRouter = express.Router()
 
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     Question:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           description: The question ID.
+ *           example: 1
+ *         title:
+ *           type: string
+ *           description: Question title.
+ *           example: string
+ *         description:
+ *           type: string
+ *           description: Question description.
+ *           example: string
+ *         userId:
+ *           type: integer
+ *           description: User Id.
+ *           example: 1
+ *         categoryId:
+ *           type: integer
+ *           description: Category Id.
+ *           example: 1
+ */
+
+/**
+ * @openapi
+ * tags:
+ *  name: Questions
+ *  description: API to manage questions.
+ */
+
+/**
+ * @openapi
+ * /questions:
+ *   get:
+ *     summary: Get all questions
+ *     tags: [Questions]
+ *     parameters:
+ *       - in: query
+ *         name: categoryName
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: A list of questions.
+ *         content:
+ *           application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/Question'
+ */
 questionRouter.get(
   '/',
   expressAsyncHandler(async (req, res) => {
@@ -30,6 +85,35 @@ questionRouter.get(
   })
 )
 
+/**
+ * @openapi
+ * /questions/{id}:
+ *   get:
+ *     summary: Get question with id
+ *     tags: [Questions]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: A list of questions.
+ *         content:
+ *           application/json:
+ *            schema:
+ *             type: object
+ *             properties:
+ *               question:
+ *                 $ref: '#/components/schemas/Question'
+ *               answers:
+ *                 type: array
+ *                 items: 
+ *                   $ref: '#/components/schemas/Answer'
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ */
 questionRouter.get(
   '/:id',
   expressAsyncHandler(async (req, res) => {
@@ -49,6 +133,64 @@ questionRouter.get(
   })
 )
 
+/**
+ * @openapi
+ * /questions/create:
+ *   post:
+ *     summary: Create new question
+ *     tags: [Questions]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *              type: object
+ *              properties:
+ *                title:
+ *                  type: string
+ *                  description: Question title.
+ *                  example: string
+ *                description:
+ *                  type: string
+ *                  description: Question description.
+ *                  example: string
+ *                categoryName:
+ *                  type: string
+ *                  description: Category Name.
+ *                  example: string
+ *     responses:
+ *       201:
+ *         description: New user with category name.
+ *         content:
+ *           application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                id:
+ *                  type: integer
+ *                  description: The question ID.
+ *                  example: 1
+ *                title:
+ *                  type: string
+ *                  description: Question title.
+ *                  example: string
+ *                description:
+ *                  type: string
+ *                  description: Question description.
+ *                  example: string
+ *                userId:
+ *                  type: integer
+ *                  description: User Id.
+ *                  example: 1
+ *                categoryId:
+ *                  type: integer
+ *                  description: Category Id.
+ *                  example: 1
+ *                categoryName:
+ *                   type: string
+ *                   description: Category Name.
+ *                   example: string
+ */
 questionRouter.post(
   '/create',
   isAuth,
@@ -68,13 +210,37 @@ questionRouter.post(
   })
 )
 
+/**
+ * @openapi
+ * /questions/{id}:
+ *   delete:
+ *     summary: Delete question with id
+ *     tags: [Questions]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *            schema:
+ *             type: object
+ *             properties:
+ *               message:
+ *                 type: string
+ *                 example: Success
+ *       403:
+ *         $ref: '#/components/responses/Forbiden'
+ */
 questionRouter.delete(
   '/:id',
   isAuth,
   expressAsyncHandler(async (req, res) => {
     const { id } = req.params
     const question = await Question.findByPk(id)
-    console.log(question.userId === req.user.id)
     if (question.userId === req.user.id || req.user.isAdmin) {
       await question.destroy()
       res.send({ message: 'Success' })
@@ -84,14 +250,57 @@ questionRouter.delete(
   })
 )
 
+/**
+ * @openapi
+ * /questions/{id}:
+ *   patch:
+ *     summary: Update question
+ *     tags: [Questions]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *              type: object
+ *              properties:
+ *                title:
+ *                  type: string
+ *                  description: Question title.
+ *                  example: string
+ *                description:
+ *                  type: string
+ *                  description: Question description.
+ *                  example: string
+ *                categoryName:
+ *                  type: string
+ *                  description: Category Name.
+ *                  example: string
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *     responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *            schema:
+ *             type: object
+ *             properties:
+ *               message:
+ *                 type: string
+ *                 example: Success
+ *       403:
+ *         $ref: '#/components/responses/Forbiden'
+ */
 questionRouter.patch(
-  '/id',
+  '/:id',
   isAuth,
   expressAsyncHandler(async (req, res) => {
     const { id } = req.params
     const { title, description, categoryName } = req.body
     const question = await Question.findByPk(id)
-    console.log(question.userId === req.user.id)
     if (question.userId === req.user.id || req.user.isAdmin) {
       await updateQuestion({ id, title, description, categoryName })
       res.send({ message: 'Success' })

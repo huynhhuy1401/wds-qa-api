@@ -8,7 +8,7 @@ const createAnswer = async ({ answerText, questionId, userId }) => {
   })
 }
 
-const deleteAnswer = async ({ id }) => {
+const deleteAnswer = async ( id ) => {
   const answer = await Answer.findByPk(id)
   await answer.destroy()
 }
