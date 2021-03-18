@@ -43,6 +43,40 @@ const answerRouter = express.Router()
  *           example: 1
  */
 
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     AnswerWithUser:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           description: The answer ID.
+ *           example: 1
+ *         answerText:
+ *           type: string
+ *           description: Answer text.
+ *           example: string
+ *         userId:
+ *           type: integer
+ *           description: User Id.
+ *           example: 1
+ *         questionId:
+ *           type: integer
+ *           description: Question Id.
+ *           example: 1
+ *         user:
+ *           type: object
+ *           properties:
+ *             name:
+ *               type: string
+ *               example: string
+ *             username:
+ *               type: string
+ *               example: string
+ */
+
 // Tao answer moi
 /**
  * @openapi

@@ -13,6 +13,7 @@ const {
 const { getAllAnswersOfQuestion } = answerUtils
 const { isAuth } = require('../utils/authUtils')
 const Question = require('../models/question')
+const User = require('../models/user')
 
 const questionRouter = express.Router()
 
@@ -47,6 +48,44 @@ const questionRouter = express.Router()
 
 /**
  * @openapi
+ * components:
+ *   schemas:
+ *     QuestionWithUser:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           description: The question ID.
+ *           example: 1
+ *         title:
+ *           type: string
+ *           description: Question title.
+ *           example: string
+ *         description:
+ *           type: string
+ *           description: Question description.
+ *           example: string
+ *         userId:
+ *           type: integer
+ *           description: User Id.
+ *           example: 1
+ *         categoryId:
+ *           type: integer
+ *           description: Category Id.
+ *           example: 1
+ *         user:
+ *           type: object
+ *           properties:
+ *             name:
+ *               type: string
+ *               example: string
+ *             username:
+ *               type: string
+ *               example: string
+ */
+
+/**
+ * @openapi
  * tags:
  *  name: Questions
  *  description: API to manage questions.
@@ -60,7 +99,7 @@ const questionRouter = express.Router()
  *     tags: [Questions]
  *     parameters:
  *       - in: query
- *         name: categoryName
+ *         name: category
  *         schema:
  *           type: string
  *     responses:
@@ -69,7 +108,9 @@ const questionRouter = express.Router()
  *         content:
  *           application/json:
  *            schema:
- *              $ref: '#/components/schemas/Question'
+ *              type: array
+ *              items: 
+ *                $ref: '#/components/schemas/Question'
  */
 questionRouter.get(
   '/',
@@ -106,11 +147,11 @@ questionRouter.get(
  *             type: object
  *             properties:
  *               question:
- *                 $ref: '#/components/schemas/Question'
+ *                 $ref: '#/components/schemas/QuestionWithUser'
  *               answers:
  *                 type: array
  *                 items: 
- *                   $ref: '#/components/schemas/Answer'
+ *                   $ref: '#/components/schemas/AnswerWithUser'
  *       404:
  *         $ref: '#/components/responses/NotFound'
  */
@@ -118,12 +159,16 @@ questionRouter.get(
   '/:id',
   expressAsyncHandler(async (req, res) => {
     const { id } = req.params
-
     const question = await getQuestion(id)
+    const user = await User.findByPk(question.userId)
     const answers = await getAllAnswersOfQuestion(id)
     const data = {
       ...question.dataValues,
-      answers: answers
+      answers: answers,
+      user: {
+        name: user.name,
+        username: user.username
+      }
     }
     if (question) {
       res.send(data)

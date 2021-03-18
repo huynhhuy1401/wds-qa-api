@@ -23,4 +23,10 @@ const Answer = sequelize.define('Answer', {
   },
 })
 
+Answer.belongsTo(User, {
+  foreignKey: "userId",
+  as: 'user'
+})
+User.hasMany(Answer)
+
 module.exports = Answer

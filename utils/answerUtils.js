@@ -1,4 +1,5 @@
 const Answer = require('../models/answer')
+const User = require('../models/user')
 
 const createAnswer = async ({ answerText, questionId, userId }) => {
   return await Answer.create({
@@ -24,6 +25,11 @@ const getAllAnswersOfQuestion = async (questionId) => {
     where: {
       questionId: questionId,
     },
+    include: [{
+      model: User,
+      as: 'user',
+      attributes: ['username', 'name']
+    }]
   })
 }
 
